@@ -1,5 +1,6 @@
 from sscopes import validate
 from sscopes import exceptions
+from functools import partial
 import pytest
 
 
@@ -38,6 +39,12 @@ def test_bad_override_type():
 
     def oops(**kwargs):
         return 'foobar'
+
+    def okay(outcome, **kwargs):
+        return outcome
+
+    assert validate(base, inbound, override=partial(okay, outcome=True))
+    assert not validate(base, inbound, override=partial(okay, outcome=False))
 
     with pytest.raises(exceptions.OverrideError):
         validate(base, inbound, override=oops)

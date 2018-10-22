@@ -59,3 +59,10 @@ def test_overzealous_colons():
     inbound = 'bar'
     with pytest.raises(InvalidScope):
         validate(base, inbound)
+
+
+def test_negation_without_specifc_actions():
+    base = 'foo::bar'
+    inbound = 'foo'
+
+    assert validate(base, inbound)
