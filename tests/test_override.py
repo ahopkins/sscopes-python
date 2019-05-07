@@ -5,8 +5,8 @@ import pytest
 
 
 def test_override_outcome():
-    base = '::'
-    inbound = 'foo'
+    base = "::"
+    inbound = "foo"
     assert validate(base, inbound) is False
 
     def always_true(**kwargs):
@@ -16,29 +16,33 @@ def test_override_outcome():
 
 
 def test_override_arguments():
-    _base = '::'
-    _inbound = 'foo'
+    _base = "::"
+    _inbound = "foo"
 
     def check_args(is_valid, base, inbounds, require_all_actions):
         inbound = inbounds[0]
         return (
-            len(inbounds) == 1 and
-            is_valid is False and
-            not base.namespace and not base.actions and not base.negations and
-            inbound.namespace == _inbound and not inbound.actions and not inbound.negations and
-            require_all_actions is False
+            len(inbounds) == 1
+            and is_valid is False
+            and not base.namespace
+            and not base.actions
+            and not base.negations
+            and inbound.namespace == _inbound
+            and not inbound.actions
+            and not inbound.negations
+            and require_all_actions is False
         )
 
     assert validate(_base, _inbound, override=check_args, require_all_actions=False)
 
 
 def test_bad_override_type():
-    base = '::'
-    inbound = 'foo'
+    base = "::"
+    inbound = "foo"
     assert validate(base, inbound) is False
 
     def oops(**kwargs):
-        return 'foobar'
+        return "foobar"
 
     def okay(outcome, **kwargs):
         return outcome

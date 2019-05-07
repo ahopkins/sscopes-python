@@ -66,7 +66,6 @@ def simple_multiple(ScopeTestCase):
         ScopeTestCase(base="user:read foo:bar", inbound=":read :bar", outcome=False),
         ScopeTestCase(base="user:read foo:bar", inbound="user:read foo", outcome=True),
         ScopeTestCase(base="user:read foo:bar", inbound="user foo", outcome=True),
-
         # Should pass if only one base is required
         ScopeTestCase(base="user foo", inbound="user", outcome=False),
     )
@@ -94,13 +93,19 @@ def complex_(ScopeTestCase):
         ScopeTestCase(base="user:read::delete", inbound="user", outcome=True),
         ScopeTestCase(base="user:read::delete", inbound="user:read", outcome=True),
         ScopeTestCase(base="user:read::delete", inbound="user:delete", outcome=False),
-        ScopeTestCase(base="user:read::delete", inbound="user:read:delete", outcome=False),
+        ScopeTestCase(
+            base="user:read::delete", inbound="user:read:delete", outcome=False
+        ),
         ScopeTestCase(base="user:read::delete", inbound="user:write", outcome=False),
-
         # Should pass if only one base is required
-        ScopeTestCase(base="user:read user::delete", inbound="user:read:delete", outcome=False),
-        ScopeTestCase(base="user:read user::delete", inbound="user:read user:delete", outcome=False),
-
+        ScopeTestCase(
+            base="user:read user::delete", inbound="user:read:delete", outcome=False
+        ),
+        ScopeTestCase(
+            base="user:read user::delete",
+            inbound="user:read user:delete",
+            outcome=False,
+        ),
         ScopeTestCase(base="", inbound="user", outcome=False),
         ScopeTestCase(base="", inbound=":read", outcome=False),
         ScopeTestCase(base="", inbound="user:read", outcome=False),
@@ -114,13 +119,11 @@ def complex_(ScopeTestCase):
 
 
 def test_regular(
-    simple_single_specific,
-    simple_single_global,
-    simple_multiple,
-    complex_
+    simple_single_specific, simple_single_global, simple_multiple, complex_
 ):
-    for test_case in simple_single_specific + simple_single_global + \
-            simple_multiple + complex_:
+    for test_case in (
+        simple_single_specific + simple_single_global + simple_multiple + complex_
+    ):
         is_valid = validate(test_case.base, test_case.inbound)
         assert is_valid is test_case.outcome
 
@@ -131,4 +134,6 @@ def test_not_require_all(ScopeTestCase):
 
     # from complex_
     assert validate("user:read user::delete", "user:read:delete", require_all=False)
-    assert validate("user:read user::delete", "user:read user:delete", require_all=False)
+    assert validate(
+        "user:read user::delete", "user:read user:delete", require_all=False
+    )

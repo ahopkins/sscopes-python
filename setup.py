@@ -4,12 +4,28 @@
 """The setup script."""
 
 from setuptools import setup, find_packages
+from os import path
+import codecs
+import re
 
-with open("README.rst") as readme_file:
-    readme = readme_file.read()
+here = path.abspath(path.dirname(__file__))
 
-with open("HISTORY.rst") as history_file:
-    history = history_file.read()
+
+def open_local(paths, mode="r", encoding="utf8"):
+    p = path.join(here, *paths)
+    return codecs.open(p, mode, encoding)
+
+
+with open_local(["README.md"]) as rm:
+    long_description = rm.read()
+
+with open_local(["sscopes", "__init__.py"], encoding="latin1") as fp:
+    try:
+        version = re.findall(
+            r"^__version__ = \"([0-9\.]+)\"", fp.read(), re.M
+        )[0]
+    except IndexError:
+        raise RuntimeError("Unable to determine version.")
 
 requirements = []
 
@@ -21,21 +37,20 @@ setup(
     author="Adam Hopkins",
     author_email="admhpkns@gmail.com",
     classifiers=[
-        "Development Status :: 2 - Pre-Alpha",
+        "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
         "Natural Language :: English",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
     ],
     description="Python implementation of Structured Scopes",
     install_requires=requirements,
     license="MIT license",
-    long_description=readme + "\n\n" + history,
+    long_description=long_description,
+    long_description_content_type="text/markdown",
     include_package_data=True,
     keywords="sscopes",
     name="sscopes",
@@ -44,6 +59,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/ahopkins/sscopes",
-    version="0.1.0",
+    version=version,
     zip_safe=False,
 )

@@ -49,9 +49,7 @@ def _validate_namespace(base_namespace, inbound_namespace):
     """
     base_namespace = base_namespace.strip()
 
-    is_global = (
-        False if base_namespace and base_namespace != GLOBAL_NS else True
-    )
+    is_global = False if base_namespace and base_namespace != GLOBAL_NS else True
 
     if is_global:
         return True
@@ -87,9 +85,7 @@ def _validate_negations(base_negations, inbound_actions):
 
 
 @lru_cache(maxsize=256)
-def _validate_single_scope(
-    base, inbounds, require_all_actions=True, override=None
-):
+def _validate_single_scope(base, inbounds, require_all_actions=True, override=None):
     # Before beginning validaition, return as invalid if inbound is None
     # or is a list containing only None values
     # or if the base is None
@@ -114,17 +110,11 @@ def _validate_single_scope(
 
     if do_validation:
         for inbound in inbounds:
-            valid_namespace = _validate_namespace(
-                base.namespace, inbound.namespace
-            )
+            valid_namespace = _validate_namespace(base.namespace, inbound.namespace)
             valid_actions = _validate_actions(
-                base.actions,
-                inbound.actions,
-                require_all_actions=require_all_actions,
+                base.actions, inbound.actions, require_all_actions=require_all_actions
             )
-            valid_negations = _validate_negations(
-                base.negations, inbound.actions
-            )
+            valid_negations = _validate_negations(base.negations, inbound.actions)
 
             is_valid = valid_namespace and valid_actions and valid_negations
 
@@ -151,20 +141,14 @@ def _validate_single_scope(
 
 
 def validate(
-    base_scopes,
-    inbounds,
-    require_all=True,
-    require_all_actions=True,
-    override=None,
+    base_scopes, inbounds, require_all=True, require_all_actions=True, override=None
 ):
     # Confirm scopes' formatting
     if any("::::" in x for x in (str(base_scopes), str(inbounds))):
         raise exceptions.InvalidScope
 
     if inbounds and "::" in inbounds:
-        raise exceptions.InvalidScope(
-            "Inbound scopes may not contain negations"
-        )
+        raise exceptions.InvalidScope("Inbound scopes may not contain negations")
 
     base_scopes = _destructure(base_scopes)
     inbounds = _destructure(inbounds)
@@ -173,10 +157,7 @@ def validate(
 
     return method(
         _validate_single_scope(
-            base,
-            inbounds,
-            require_all_actions=require_all_actions,
-            override=override,
+            base, inbounds, require_all_actions=require_all_actions, override=override
         )
         for base in base_scopes
     )

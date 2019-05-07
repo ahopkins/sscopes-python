@@ -1,0 +1,18 @@
+[paths]
+source =
+    sscopes
+    tests
+
+[run]
+source = sscopes
+omit = tests
+branch = True
+
+[report]
+exclude_lines =
+    no cov
+    no qa
+    noqa
+    NOQA
+    pragma: no cover
+    if __name__ == .__main__.:

@@ -1,7 +1,5 @@
 class InvalidScope(Exception):
-    def __init__(
-        self, message="Cannot process scope in invalid form", **kwargs
-    ):
+    def __init__(self, message="Cannot process scope in invalid form", **kwargs):
         super().__init__(message, **kwargs)
 
 

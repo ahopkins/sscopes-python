@@ -16,8 +16,8 @@ def test_list_scopes():
 
 
 def test_dict_scopes():
-    base = {'foo': 'bar'}
-    inbound = 'foo'
+    base = {"foo": "bar"}
+    inbound = "foo"
 
     with pytest.raises(InvalidScope):
         assert validate(base, inbound)
@@ -37,32 +37,32 @@ def test_none_input():
 
 def test_none_scopes():
     base = None
-    inbound = 'bar'
+    inbound = "bar"
     with pytest.raises(InvalidScope):
         validate(base, inbound)
 
-    base = 'foo'
+    base = "foo"
     inbound = None
     with pytest.raises(InvalidScope):
         validate(base, inbound)
 
 
 def test_inbound_negation():
-    base = 'foo'
-    inbound = '::bar'
+    base = "foo"
+    inbound = "::bar"
     with pytest.raises(InvalidScope):
         validate(base, inbound)
 
 
 def test_overzealous_colons():
-    base = 'foo::::bar'
-    inbound = 'bar'
+    base = "foo::::bar"
+    inbound = "bar"
     with pytest.raises(InvalidScope):
         validate(base, inbound)
 
 
 def test_negation_without_specifc_actions():
-    base = 'foo::bar'
-    inbound = 'foo'
+    base = "foo::bar"
+    inbound = "foo"
 
     assert validate(base, inbound)
