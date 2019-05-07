@@ -38,7 +38,9 @@ def _destructure(scopes):
     elif isinstance(scopes, (list, tuple, set, GeneratorType)):
         return tuple(scopes)
     else:
-        raise exceptions.InvalidScope("Your scopes should either be a string or list-like object")
+        raise exceptions.InvalidScope(
+            "Your scopes should either be a string or list-like object"
+        )
 
 
 def _validate_namespace(base_namespace, inbound_namespace):
@@ -47,7 +49,9 @@ def _validate_namespace(base_namespace, inbound_namespace):
     """
     base_namespace = base_namespace.strip()
 
-    is_global = False if base_namespace and base_namespace != GLOBAL_NS else True
+    is_global = (
+        False if base_namespace and base_namespace != GLOBAL_NS else True
+    )
 
     if is_global:
         return True
@@ -83,10 +87,9 @@ def _validate_negations(base_negations, inbound_actions):
 
 
 @lru_cache(maxsize=256)
-def _validate_single_scope(base,
-                           inbounds,
-                           require_all_actions=True,
-                           override=None):
+def _validate_single_scope(
+    base, inbounds, require_all_actions=True, override=None
+):
     # Before beginning validaition, return as invalid if inbound is None
     # or is a list containing only None values
     # or if the base is None
@@ -111,11 +114,17 @@ def _validate_single_scope(base,
 
     if do_validation:
         for inbound in inbounds:
-            valid_namespace = _validate_namespace(base.namespace, inbound.namespace)
-            valid_actions = _validate_actions(
-                base.actions, inbound.actions, require_all_actions=require_all_actions
+            valid_namespace = _validate_namespace(
+                base.namespace, inbound.namespace
             )
-            valid_negations = _validate_negations(base.negations, inbound.actions)
+            valid_actions = _validate_actions(
+                base.actions,
+                inbound.actions,
+                require_all_actions=require_all_actions,
+            )
+            valid_negations = _validate_negations(
+                base.negations, inbound.actions
+            )
 
             is_valid = valid_namespace and valid_actions and valid_negations
 
@@ -124,14 +133,16 @@ def _validate_single_scope(base,
             if is_valid:
                 break
 
-    outcome = override(
-        is_valid=is_valid,
-        base=base,
-        inbounds=inbounds,
-        require_all_actions=require_all_actions,
-    ) if callable(
-        override
-    ) else is_valid
+    outcome = (
+        override(
+            is_valid=is_valid,
+            base=base,
+            inbounds=inbounds,
+            require_all_actions=require_all_actions,
+        )
+        if callable(override)
+        else is_valid
+    )
 
     if type(outcome) != bool:
         raise exceptions.OverrideError
@@ -139,17 +150,21 @@ def _validate_single_scope(base,
     return outcome
 
 
-def validate(base_scopes,
-             inbounds,
-             require_all=True,
-             require_all_actions=True,
-             override=None):
+def validate(
+    base_scopes,
+    inbounds,
+    require_all=True,
+    require_all_actions=True,
+    override=None,
+):
     # Confirm scopes' formatting
-    if any('::::' in x for x in (str(base_scopes), str(inbounds))):
+    if any("::::" in x for x in (str(base_scopes), str(inbounds))):
         raise exceptions.InvalidScope
 
-    if inbounds and '::' in inbounds:
-        raise exceptions.InvalidScope('Inbound scopes may not contain negations')
+    if inbounds and "::" in inbounds:
+        raise exceptions.InvalidScope(
+            "Inbound scopes may not contain negations"
+        )
 
     base_scopes = _destructure(base_scopes)
     inbounds = _destructure(inbounds)
@@ -158,8 +173,10 @@ def validate(base_scopes,
 
     return method(
         _validate_single_scope(
-            base, inbounds, require_all_actions=require_all_actions,
-            override=override
+            base,
+            inbounds,
+            require_all_actions=require_all_actions,
+            override=override,
         )
         for base in base_scopes
     )
