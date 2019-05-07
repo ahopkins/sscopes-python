@@ -29,7 +29,7 @@ with open_local(["sscopes", "__init__.py"], encoding="latin1") as fp:
 
 requirements = []
 
-setup_requirements = ["pytest-runner"]
+setup_requirements = ["pytest-runner", "wheel"]
 
 test_requirements = ["pytest"]
 
